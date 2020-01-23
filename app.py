@@ -18,10 +18,6 @@ def webhook_verify():
 def webhook_action():
     data = json.loads(request.data.decode('utf-8'))
     for entry in data['entry']:
-        if entry ["message"].get("attachments"):
-            attachment_link = entry["message"]["attachments"][0]["payload"]["url"]
-            print("Image received, boss!")
-            print(attachment_link)
         user_message = entry['messaging'][0]['message']['text']
         user_id = entry['messaging'][0]['sender']['id']
         response = {
@@ -52,6 +48,10 @@ def webhook_dev():
 def handle_message(user_id, user_message):
     # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
     return "Hello "+user_id+" ! You just sent me : " + user_message
+
+def handle_image(user_id, image):
+    # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
+    return "Hello "+user_id+" ! You just sent me : " + image
 
 @app.route('/privacy', methods=['GET'])
 def privacy():
