@@ -47,6 +47,13 @@ def webhook_dev():
 
 def handle_message(user_id, user_message):
     # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
+
+    if user_message["message"].get("attachments"):
+      attachment_link = user_message["message"]["attachments"][0]["payload"]["url"]
+    print("Image received, boss!")
+    print(attachment_link)
+
+
     return "Hello "+user_id+" ! You just sent me : " + user_message
 
 @app.route('/privacy', methods=['GET'])
@@ -57,6 +64,7 @@ def privacy():
 @app.route('/', methods=['GET'])
 def index():
     return "Hello there, I'm a facebook messenger bot."
+
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
