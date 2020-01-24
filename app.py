@@ -93,9 +93,9 @@ def upload_image(user_id, url):
     #cloud_name = 'dyigdenkz')
 
     Cloud.config.update = ({
-        'cloud_name':os.environ.get('CLOUDINARY_CLOUD_NAME'),
-        'api_key': os.environ.get('CLOUDINARY_API_KEY'),
-        'api_secret': os.environ.get('CLOUDINARY_API_SECRET')
+        'cloud_name':os.getenv('CLOUDINARY_CLOUD_NAME', None),
+        'api_key': os.getenv('CLOUDINARY_API_KEY', None),
+        'api_secret': os.getenv('CLOUDINARY_API_SECRET', None)
     })
 
     #public_id="https://res.cloudinary.com/dyigdenkz/pupdate/"
