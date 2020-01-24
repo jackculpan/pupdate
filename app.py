@@ -78,7 +78,11 @@ def handle_message():
 
                     if messaging_event["message"].get("attachment"):
                         attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
-                        send_message_response(sender_id, attachment_link)
+                        print(attachment_link)
+                        #send_message_response(sender_id, attachment_link)
+                    if messaging_event["message"].get("attachments"):
+                        for attachment in messaging_event["message"]["attachments"]:
+                            attachment_link.append(attachment["payload"]["url"])
     return "ok"
 
 def send_message_response(sender_id, message_text):
