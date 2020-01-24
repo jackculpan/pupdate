@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-import requests, json, random, os, time
+import requests, json, random, os
 import cloudinary as Cloud
 
 app = Flask(__name__)

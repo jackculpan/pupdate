@@ -11,3 +11,4 @@ Pygments==2.2.0
 requests==2.18.4
 urllib3==1.22
 Werkzeug==0.14.1
+cloudinary==1.19.1
