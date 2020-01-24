@@ -68,23 +68,24 @@ def handle_message():
     '''
     data = request.get_json()
     attachments = []
-    if data["object"] == "page":
-        for entry in data["entry"]:
-            for messaging_event in entry["messaging"]:
-                if messaging_event.get("message"):
-                    sender_id = messaging_event["sender"]["id"]
-                    recipient_id = messaging_event["recipient"]["id"]
-                    if "text" in messaging_event["message"]:
-                        message_text = messaging_event["message"]["text"]
-                        send_message_response(sender_id, message_text)
+    #if data["object"] == "page":
+    for entry in data["entry"]:
+        for messaging_event in entry["messaging"]:
+            if messaging_event.get("message"):
+                sender_id = messaging_event["sender"]["id"]
+                recipient_id = messaging_event["recipient"]["id"]
+                if "text" in messaging_event["message"]:
+                    message_text = messaging_event["message"]["text"]
+                    send_message_response(sender_id, message_text)
 
-                    if messaging_event["message"].get("attachment"):
-                        attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
-                        upload_image(sender_id, attachment_link)
-                        print("TESTING 123")
-                    #if messaging_event["message"].get("attachments"):
-                        #for attachment in messaging_event["message"]["attachments"]:
-                            #attachments.append(attachment["payload"]["url"])
+                if messaging_event["message"].get("attachment"):
+                    attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
+                    print(messaging_event["message"])
+                    upload_image(sender_id, attachment_link)
+                    print("TESTING 123")
+                #if messaging_event["message"].get("attachments"):
+                    #for attachment in messaging_event["message"]["attachments"]:
+                        #attachments.append(attachment["payload"]["url"])
     return "ok"
 
 def upload_image(user_id, url):
