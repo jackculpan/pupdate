@@ -8,61 +8,59 @@ verify_token = os.getenv('VERIFY_TOKEN', None)
 # token to send messages through facebook messenger
 access_token = os.getenv('ACCESS_TOKEN', None)
 
-@app.route('/webhook', methods=['GET'])
-def webhook_verify():
-    if request.args.get('hub.verify_token') == verify_token:
-        return request.args.get('hub.challenge')
-    return "Wrong verify token"
-
-@app.route('/webhook', methods=['POST'])
-def webhook_action():
-    data = json.loads(request.data.decode('utf-8'))
-    if data["object"] == "page":
-        for entry in data['entry']:
-            user_message = entry['messaging'][0]['message']['text']
-            user_id = entry['messaging'][0]['sender']['id']
-            response = {
-                'recipient': {'id': user_id},
-                'message': {}
-            }
-            response['message']['text'] = handle_message(user_id, user_message)
-            r = requests.post(
-                'https://graph.facebook.com/v2.6/me/messages/?access_token=' + access_token, json=response)
-    return Response(response="EVENT RECEIVED",status=200)
-
-@app.route('/webhook_dev', methods=['POST'])
-def webhook_dev():
-    # custom route for local development
-    data = json.loads(request.data.decode('utf-8'))
-    user_message = data['entry'][0]['messaging'][0]['message']['text']
-    user_id = data['entry'][0]['messaging'][0]['sender']['id']
-    response = {
-        'recipient': {'id': user_id},
-        'message': {'text': handle_message(user_id, user_message)}
-    }
-    return Response(
-        response=json.dumps(response),
-        status=200,
-        mimetype='application/json'
-    )
-
-def handle_message(user_id, user_message):
-    # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
-    return "Hello "+user_id+" ! You just sent me : " + user_message
-
-def handle_image(user_id, image):
-    # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
-    return "Hello "+user_id+" ! You just sent me : " + image
-
-@app.route('/privacy', methods=['GET'])
-def privacy():
-    # needed route if you need to make your bot public
-    return "This facebook messenger bot's only purpose is to [...]. That's all. We don't use it in any other way."
+PAGE_ACCESS_TOKEN = 'EAAB3x3IwCDQBAO3K04ejlTkG3GEx7Wcz4YKMZCmRMLyz8CrH0AekH2gzVGuqfYttswSKv2ECBSHbuRKhoFYslPrpFbRICtZCOhR5Qkj6qd9WgvbULPtJi119JAlRwRSq6l4seNeD2uqHZAPEK2McWZBtrXZA59uxrZC4196ZCzpZAQZDZD'
+VERIFY_TOKEN = '978abb1eadb9aa6c841abdb95429cda479adf571dc455077dce9cd9e4fb7a9d6'
 
 @app.route('/', methods=['GET'])
-def index():
-    return "Hello there, I'm a facebook messenger bot."
+def handle_verification():
+    if (request.args.get('hub.verify_token', '') == VERIFY_TOKEN):
+        print("Verified")
+        return request.args.get('hub.challenge', '')
+    else:
+        print("Wrong token")
+        return "Error, wrong validation token"
 
+def send_message(sender_id, message_text):
+    '''
+    Sending response back to the user using facebook graph API
+    '''
+    r = requests.post("https://graph.facebook.com/v2.6/me/messages",
+
+        params={"access_token": PAGE_ACCESS_TOKEN},
+
+        headers={"Content-Type": "application/json"},
+
+        data=json.dumps({
+        "recipient": {"id": sender_id},
+        "message": {"text": message_text}
+    }))
+
+@app.route('/', methods=['POST'])
+def handle_message():
+    '''
+    Handle messages sent by facebook messenger to the applicaiton
+    '''
+    data = request.get_json()
+
+    if data["object"] == "page":
+        for entry in data["entry"]:
+            for messaging_event in entry["messaging"]:
+                if messaging_event.get("message"):
+
+                    sender_id = messaging_event["sender"]["id"]
+                    recipient_id = messaging_event["recipient"]["id"]
+                    message_text = messaging_event["message"]["text"]
+                    send_message_response(sender_id, message_text)
+
+
+      return "ok"
+
+def send_message_response(sender_id, message_text):
+    sentenceDelimiter = ". "
+    messages = message_text.split(sentenceDelimiter)
+
+    for message in messages:
+        send_message(sender_id, message)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run()
