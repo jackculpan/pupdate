@@ -108,7 +108,8 @@ def webhook_dev():
 
                 if messaging_event["message"].get("attachment"):
                     attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
-                    send_image(sender_id, attachment_link)
+                    print(attachment_link)
+                    send_message(sender_id, attachment_link)
     return "ok"
 
 def handle_dev_message(user_id, user_message):
