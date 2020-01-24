@@ -17,16 +17,17 @@ def webhook_verify():
 @app.route('/webhook', methods=['POST'])
 def webhook_action():
     data = json.loads(request.data.decode('utf-8'))
-    for entry in data['entry']:
-        user_message = entry['messaging'][0]['message']['text']
-        user_id = entry['messaging'][0]['sender']['id']
-        response = {
-            'recipient': {'id': user_id},
-            'message': {}
-        }
-        response['message']['text'] = handle_message(user_id, user_message)
-        r = requests.post(
-            'https://graph.facebook.com/v2.6/me/messages/?access_token=' + access_token, json=response)
+    if data["object"] == "page":
+        for entry in data['entry']:
+            user_message = entry['messaging'][0]['message']['text']
+            user_id = entry['messaging'][0]['sender']['id']
+            response = {
+                'recipient': {'id': user_id},
+                'message': {}
+            }
+            response['message']['text'] = handle_message(user_id, user_message)
+            r = requests.post(
+                'https://graph.facebook.com/v2.6/me/messages/?access_token=' + access_token, json=response)
     return Response(response="EVENT RECEIVED",status=200)
 
 @app.route('/webhook_dev', methods=['POST'])
