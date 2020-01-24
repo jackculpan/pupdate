@@ -1,5 +1,7 @@
 from flask import Flask, request, Response
-import requests, json, random, os
+import requests, json, random, os, time
+import cloudinary as Cloud
+
 app = Flask(__name__)
 
 # env_variables
@@ -79,12 +81,53 @@ def handle_message():
                     if messaging_event["message"].get("attachment"):
                         attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
                         print(attachment_link)
-                        send_message(sender_id, attachment_link)
+                        upload_image(sender_id, attachment_link)
 
                     #if messaging_event["message"].get("attachments"):
                         #for attachment in messaging_event["message"]["attachments"]:
                             #attachments.append(attachment["payload"]["url"])
     return "ok"
+
+def upload_image(user_id, url):
+    #cloudinary.uploader.unsigned_upload(url, str(count_files(user_id)),
+    #cloud_name = 'dyigdenkz')
+
+    Cloud.config.update = ({
+        'cloud_name':os.environ.get('CLOUDINARY_CLOUD_NAME'),
+        'api_key': os.environ.get('CLOUDINARY_API_KEY'),
+        'api_secret': os.environ.get('CLOUDINARY_API_SECRET')
+    })
+
+    #public_id="https://res.cloudinary.com/dyigdenkz/pupdate/"
+    result = Cloud.uploader.unsigned_upload(url, ml_default)
+    #, folder=user_id
+    #post_url = "https://api.cloudinary.com/v1_1/dyigdenkz/auto/upload"
+    #file = url
+    #api_key = os.getenv('CLOUDINARY_KEY', None)
+    #timestamp = time()
+
+def upload_images():
+    image = CloudinaryJsFileField(
+    attrs = { 'multiple': 1 })
+
+
+def count_files(user_id):
+    #cloudinary.api.subfolders("pupdate/{}".format(user_id))
+
+    result = cloudinary.Search()
+        .expression('folder={}'.format(user_id))
+        .sort_by('public_id','desc')
+        .aggregate('format')
+        .execute()
+    count = count(result)
+    #"https://res.cloudinary.com/dyigdenkz/image/list/user_id.json"
+
+    #count number of files
+    #+1 to that for file name
+    return count+1
+
+
+
 
 def send_message_response(sender_id, message_text):
     sentenceDelimiter = ". "
