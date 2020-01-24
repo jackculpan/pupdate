@@ -8,7 +8,7 @@ verify_token = os.getenv('VERIFY_TOKEN', None)
 # token to send messages through facebook messenger
 access_token = os.getenv('ACCESS_TOKEN', None)
 
-PAGE_ACCESS_TOKEN = 'EAAIZBVzmu74kBACrIp73309ZChRPo8B5ZBNZA9zlsEXom4vnpeTCRvpZC8WNPZAsNif94RaP7QvCWhONh2dhYSxkNOelwgV56SnRA6wuo6zxcX0etFjxeza8dWz0cZAHEo21tuiaNKWgvsr4XCZAFUnmDJPS0o3LJQoqE0IZBx7WBvAZDZD'
+PAGE_ACCESS_TOKEN = 'EAAIZBVzmu74kBAOcaeO5ATPG4EYx5rcO2ARDhuUiNfH9FmG7ZCyt075VJhsoO7a5lnqSJro2CYkjgzmhy2lb6QW5TTzsa1KmME0xea0fGbnXIQmDDH3ZAO9CfwT5eCFRYqxTaZC2Unt4HnxjXDaxk2nPB3ZCPd6d0APtdWqZAlVwZDZD'
 VERIFY_TOKEN = '978abb1eadb9aa6c841abdb95429cda479adf571dc455077dce9cd9e4fb7a9d6'
 
 @app.route('/', methods=['GET'])
