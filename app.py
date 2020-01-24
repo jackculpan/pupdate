@@ -3,13 +3,13 @@ import requests, json, random, os
 app = Flask(__name__)
 
 # env_variables
-# token to verify that this bot is legit
-verify_token = os.getenv('VERIFY_TOKEN', None)
 # token to send messages through facebook messenger
-access_token = os.getenv('ACCESS_TOKEN', None)
+PAGE_ACCESS_TOKEN = os.getenv('ACCESS_TOKEN', None)
+# token to verify that this bot is legit
+VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', None)
 
-PAGE_ACCESS_TOKEN = 'EAAfdfGQccFQBAEQz2z2dZAMGaF3x5WlpG1YcaPJCMs0EU8sEPqdjetkWCzGf69FUa7mMwDZCJsg8VGy5VcpyMkc7VtV9p4Nyzi7s9QeXyggMTwjjSKHZBTZAoPzrhhSQdP8gDsiRtbEyG1LgVH3uCE29ZCfsfKwhPg8ZBadxjYCwZDZD'
-VERIFY_TOKEN = '8d831a1a-22a0-4899-bb56-9f468c531bf9'
+#PAGE_ACCESS_TOKEN = 'EAAfdfGQccFQBAEQz2z2dZAMGaF3x5WlpG1YcaPJCMs0EU8sEPqdjetkWCzGf69FUa7mMwDZCJsg8VGy5VcpyMkc7VtV9p4Nyzi7s9QeXyggMTwjjSKHZBTZAoPzrhhSQdP8gDsiRtbEyG1LgVH3uCE29ZCfsfKwhPg8ZBadxjYCwZDZD'
+#VERIFY_TOKEN = '8d831a1a-22a0-4899-bb56-9f468c531bf9'
 
 @app.route('/', methods=['GET'])
 def handle_verification():
