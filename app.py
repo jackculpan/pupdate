@@ -72,7 +72,7 @@ def handle_message():
                 if messaging_event.get("message"):
                     sender_id = messaging_event["sender"]["id"]
                     recipient_id = messaging_event["recipient"]["id"]
-                    if messaging_event["message"]["text"]:
+                    if "text" in messaging_event["message"]:
                         message_text = messaging_event["message"]["text"]
                         send_message_response(sender_id, message_text)
 
