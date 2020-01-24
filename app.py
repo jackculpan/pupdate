@@ -99,7 +99,9 @@ def upload_image(user_id, url):
     })
 
     #public_id="https://res.cloudinary.com/dyigdenkz/pupdate/"
-    result = Cloud.uploader.unsigned_upload(url, ml_default)
+    print(url)
+    Cloud.uploader.unsigned_upload(url, ml_default)
+    return "ok"
     #, folder=user_id
     #post_url = "https://api.cloudinary.com/v1_1/dyigdenkz/auto/upload"
     #file = url
