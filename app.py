@@ -8,6 +8,10 @@ verify_token = os.getenv('VERIFY_TOKEN', None)
 # token to send messages through facebook messenger
 access_token = os.getenv('ACCESS_TOKEN', None)
 
+verify_token = os.getenv('VERIFY_TOKEN', "787399ce6883e42a364efe649b2860799218ed6a843d27ff335a76ce16de7974")
+# token to send messages through facebook messenger
+access_token = os.getenv('ACCESS_TOKEN', "EAAB3x3IwCDQBAOZBAzD7PMTTxBiIZAkWHbRRfZB4BP1AwzdmF0YLT5DEwdgjnCAitlP9pHXMdFezIb5mKejDH29FbjUZBoaqPOSezyz73g6gVWRSq5vZA69ZBbGHquzYqX2tEqysySahelkUjE3SoBWqzlnFJ31fOdVXLnK6YZB5wZDZD")
+
 @app.route('/webhook', methods=['GET'])
 def webhook_verify():
     if request.args.get('hub.verify_token') == verify_token:
