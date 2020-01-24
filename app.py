@@ -52,8 +52,7 @@ def handle_message():
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
 
-
-      return "ok"
+    return "ok"
 
 def send_message_response(sender_id, message_text):
     sentenceDelimiter = ". "
