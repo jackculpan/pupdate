@@ -51,7 +51,9 @@ def handle_message():
                     recipient_id = messaging_event["recipient"]["id"]
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
-
+                if entry["message"].get("attachments"):
+                    attachment_link = entry["message"]["attachments"][0]["payload"]["url"]
+                    send_message_response(sender_id, attachment_link)
     return "ok"
 
 def send_message_response(sender_id, message_text):
