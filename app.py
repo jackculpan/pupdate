@@ -9,7 +9,7 @@ verify_token = os.getenv('VERIFY_TOKEN', None)
 access_token = os.getenv('ACCESS_TOKEN', None)
 
 PAGE_ACCESS_TOKEN = 'EAAIZBVzmu74kBAOcaeO5ATPG4EYx5rcO2ARDhuUiNfH9FmG7ZCyt075VJhsoO7a5lnqSJro2CYkjgzmhy2lb6QW5TTzsa1KmME0xea0fGbnXIQmDDH3ZAO9CfwT5eCFRYqxTaZC2Unt4HnxjXDaxk2nPB3ZCPd6d0APtdWqZAlVwZDZD'
-VERIFY_TOKEN = '978abb1eadb9aa6c841abdb95429cda479adf571dc455077dce9cd9e4fb7a9d6'
+VERIFY_TOKEN = '8d831a1a-22a0-4899-bb56-9f468c531bf9'
 
 @app.route('/', methods=['GET'])
 def handle_verification():
@@ -38,7 +38,7 @@ def send_message(sender_id, message_text):
 @app.route('/', methods=['POST'])
 def handle_message():
     '''
-    Handle messages sent by facebook messenger to the applicaiton
+    Handle messages sent by facebook messenger to the application
     '''
     data = request.get_json()
 
