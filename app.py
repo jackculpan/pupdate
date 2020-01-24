@@ -106,25 +106,25 @@ def upload_image(user_id, url):
     #api_key = os.getenv('CLOUDINARY_KEY', None)
     #timestamp = time()
 
-def upload_images():
-    image = CloudinaryJsFileField(
-    attrs = { 'multiple': 1 })
+#def upload_images():
+    #image = CloudinaryJsFileField(
+    #attrs = { 'multiple': 1 })
 
 
-def count_files(user_id):
+#def count_files(user_id):
     #cloudinary.api.subfolders("pupdate/{}".format(user_id))
 
-    result = cloudinary.Search()
-        .expression('folder={}'.format(user_id))
-        .sort_by('public_id','desc')
-        .aggregate('format')
-        .execute()
-    count = count(result)
+    #result = cloudinary.Search()
+        #.expression('folder={}'.format(user_id))
+        #.sort_by('public_id','desc')
+        #.aggregate('format')
+        #.execute()
+    #count = count(result)
     #"https://res.cloudinary.com/dyigdenkz/image/list/user_id.json"
 
     #count number of files
     #+1 to that for file name
-    return count+1
+    #return count+1
 
 
 
