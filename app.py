@@ -63,5 +63,26 @@ def send_message_response(sender_id, message_text):
     for message in messages:
         send_message(sender_id, message)
 
+
+@app.route('/webhook_dev', methods=['POST'])
+def webhook_dev():
+    # custom route for local development
+    data = json.loads(request.data.decode('utf-8'))
+    user_message = data['entry'][0]['messaging'][0]['message']['text']
+    user_id = data['entry'][0]['messaging'][0]['sender']['id']
+    response = {
+        'recipient': {'id': user_id},
+        'message': {'text': handle_message(user_id, user_message)}
+    }
+    return Response(
+        response=json.dumps(response),
+        status=200,
+        mimetype='application/json'
+    )
+
+def handle_message(user_id, user_message):
+    # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
+    return "Hello "+user_id+" ! You just sent me : " + user_message
+
 if __name__ == '__main__':
     app.run()
