@@ -88,17 +88,24 @@ def handle_message():
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
                     setting_listener(sender_id, message_text)
+
                     if "send image" in message_text:
-                        if collection.count_documents({"user_id":sender_id}) > 0:
-                            send_image(sender_id, find_image(sender_id))
+                        if return_group_id(sender_id) is not None:
+                            group_id = return_group_id(sender_id)
+                            if db["user"].count_documents({"group_id":group_id}) > 0:
+                                send_image(sender_id, find_group_image(group_id))
+                        else:
+                            send_message(sender_id, "Please set your group id - reply with 'set id' to learn how")
+
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
                         #send_message_response(sender_id, attachment_link)
+
                         if return_group_id(sender_id) is not None:
-                            add_image(sender_id, attachment_link)
+                            add_image(sender_id, return_group_id(sender_id), attachment_link)
                         else:
-                            send_message(sender_id, "Please set your group id")
+                            send_message(sender_id, "Please set your group id - reply with 'set id' to learn how'")
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
                             send_message(sender_id, attachment_id)
@@ -109,10 +116,10 @@ mongo_db_pass = "rfgcbsD7q6jnYaJZ"
 cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
 db = cluster["pupdate"]
 
-def add_image(user_id, image_url):
+def add_image(user_id, group_id, image_url):
     #mongo_db_pass = os.getenv('MONGODB', None)
     collection = db["user"]
-    post = {"user_id": str(user_id), "image_url": str(image_url)}
+    post = {"group_id":group_id, "user_id": str(user_id), "image_url": str(image_url)}
     collection.insert_one(post)
 
 def find_image(user_id):
