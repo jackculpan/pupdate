@@ -80,9 +80,10 @@ def handle_message():
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
-                        #attachment_id = attachment["payload"]["attachment_id"]
                         send_message_response(sender_id, attachment_link)
                         upload_image(sender_id, attachment_link)
+                        if "attachment_id" in attachment:
+                            attachment_id = attachment["payload"]["attachment_id"]
     return "ok"
 
 def upload_image(user_id, url):
