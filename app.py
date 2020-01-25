@@ -127,7 +127,7 @@ def find_group_image(group_id):
     return result["image_url"]
 
 def setting_listener(user_id, message_text):
-    if "==" in message:
+    if "==" in message_text:
         sentenceDelimiter = "=="
         messages = message_text.split(sentenceDelimiter)
         setting, value = messages[0], messages[1]
