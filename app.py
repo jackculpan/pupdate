@@ -78,74 +78,34 @@ def handle_message():
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
+                    if "send image" in message_text:
+                        send_image(sender_id, find_image(sender_id))
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
                         #send_message_response(sender_id, attachment_link)
                         add_image(sender_id, attachment_link)
-                        send_image(sender_id, attachment_link)
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
                             send_message_response(sender_id, attachment_id)
 
     return "ok"
 
+mongo_db_pass = "rfgcbsD7q6jnYaJZ"
+cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
+db = cluster["pupdate"]
+collection = db["user"]
+
 def add_image(user_id, image_url):
     #mongo_db_pass = os.getenv('MONGODB', None)
-    mongo_db_pass = "rfgcbsD7q6jnYaJZ"
-    cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
-    db = cluster["pupdate"]
-    collection = db["user"]
-
-    post = {"user_id": "one", "image_url": "https://scontent-lht6-1.xx.fbcdn.net/v/t1.15752-9/83598910_147947033325885_1951601270645063680_n.png?_nc_cat=103&_nc_oc=AQkXbmgUdIdSYWdXMlGZ69aPiTzrJ_o_PAxaL6iGgOfAuUQYooIbq5g9g64FXr0RHX8&_nc_ht=scontent-lht6-1.xx&oh=f451589fc822a383d546790c371eb8c8&oe=5E9D4907"}
-    collection.insert_one(post)
-
     post = {"user_id": str(user_id), "image_url": str(image_url)}
     collection.insert_one(post)
 
-#def find_image(user_id):
-
-def upload_image(user_id, url):
-    #cloudinary.uploader.unsigned_upload(url, str(count_files(user_id)),
-    #cloud_name = 'dyigdenkz')
-
-    cloudinary.config = ({
-        'cloud_name':os.getenv('CLOUDINARY_CLOUD_NAME', None),
-        'api_key': os.getenv('CLOUDINARY_API_KEY', None),
-        'api_secret': os.getenv('CLOUDINARY_API_SECRET', None)
-    })
-
-    #public_id="https://res.cloudinary.com/dyigdenkz/pupdate/"
-    #cloudinary.uploader.upload(url)
-    cloudinary.uploader.unsigned_upload(url, ml_default)
-    return "ok"
-    #, folder=user_id
-    #post_url = "https://api.cloudinary.com/v1_1/dyigdenkz/auto/upload"
-    #file = url
-    #api_key = os.getenv('CLOUDINARY_KEY', None)
-    #timestamp = time()
-
-#def upload_images():
-    #image = CloudinaryJsFileField(
-    #attrs = { 'multiple': 1 })
-
-
-#def count_files(user_id):
-    #cloudinary.api.subfolders("pupdate/{}".format(user_id))
-
-    #result = cloudinary.Search()
-        #.expression('folder={}'.format(user_id))
-        #.sort_by('public_id','desc')
-        #.aggregate('format')
-        #.execute()
-    #count = count(result)
-    #"https://res.cloudinary.com/dyigdenkz/image/list/user_id.json"
-
-    #count number of files
-    #+1 to that for file name
-    #return count+1
-
-
+def find_image(user_id):
+    results = collection.find({"user_id": user_id})
+    count = count(results)
+    result = results[random.choice(range(count))]
+    return result["image_url"]
 
 
 def send_message_response(sender_id, message_text):
