@@ -1,6 +1,12 @@
 from flask import Flask, request, Response
 import requests, json, random, os
-import cloudinary
+import cloudinary, pymongo
+from pymongo import MongoClient
+
+mongo_db_pass = os.getenv('MONGODB', None)
+cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
+db = cluster["pupdate"]
+collection = db["user"]
 
 app = Flask(__name__)
 
@@ -81,10 +87,18 @@ def handle_message():
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
                         send_message_response(sender_id, attachment_link)
-                        upload_image(sender_id, attachment_link)
+                        add_image(sender_id, attachment_link)
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
+                            send_message_response(sender_id, attachment_id)
+
     return "ok"
+
+def add_image(user_id, image_url):
+    post = {"user_id": user_id, "image_url": image_url}
+    collection.insert_one(post)
+
+def find_image(user_id):
 
 def upload_image(user_id, url):
     #cloudinary.uploader.unsigned_upload(url, str(count_files(user_id)),
