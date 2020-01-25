@@ -2,7 +2,7 @@ from flask import Flask, request, Response
 import requests, json, random, os
 import cloudinary, pymongo
 from pymongo import MongoClient
-import schedule, time
+#import schedule, time
 
 app = Flask(__name__)
 
