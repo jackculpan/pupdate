@@ -95,7 +95,7 @@ def handle_message():
                             if db["user"].count_documents({"group_id":group_id}) > 0:
                                 send_image(sender_id, find_group_image(group_id))
                         else:
-                            send_message(sender_id, "Please set your group id - reply with 'set id' to learn how")
+                            send_message(sender_id, "Please set your group id - reply with 'set group id' to learn how")
 
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
@@ -105,7 +105,7 @@ def handle_message():
                         if return_group_id(sender_id) is not None:
                             add_image(sender_id, return_group_id(sender_id), attachment_link)
                         else:
-                            send_message(sender_id, "Please set your group id - reply with 'set id' to learn how'")
+                            send_message(sender_id, "Please set your group id - reply with 'set group id' to learn how'")
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
                             send_message(sender_id, attachment_id)
