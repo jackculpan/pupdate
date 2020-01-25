@@ -2,7 +2,6 @@ from flask import Flask, request, Response
 import requests, json, random, os
 import cloudinary, pymongo
 from pymongo import MongoClient
-#import schedule, time
 
 app = Flask(__name__)
 
@@ -15,21 +14,6 @@ VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', None)
 #PAGE_ACCESS_TOKEN = 'EAAfdfGQccFQBAEQz2z2dZAMGaF3x5WlpG1YcaPJCMs0EU8sEPqdjetkWCzGf69FUa7mMwDZCJsg8VGy5VcpyMkc7VtV9p4Nyzi7s9QeXyggMTwjjSKHZBTZAoPzrhhSQdP8gDsiRtbEyG1LgVH3uCE29ZCfsfKwhPg8ZBadxjYCwZDZD'
 #VERIFY_TOKEN = '8d831a1a-22a0-4899-bb56-9f468c531bf9'
 
-
-def job():
-    sender_id = "2540997945998584"
-    send_message(sender_id, find_image(sender_id))
-
-#schedule.every(10).minutes.do(job)
-#schedule.every().hour.do(job)
-#schedule.every(1).day.at("12:30").do(job)
-#schedule.every().monday.do(job)
-#schedule.every().wednesday.at("13:15").do(job)
-
-#while True:
-    #schedule.run_pending()
-    #time.sleep(1)
-
 @app.route('/', methods=['GET'])
 def handle_verification():
     if (request.args.get('hub.verify_token', '') == VERIFY_TOKEN):
@@ -38,6 +22,15 @@ def handle_verification():
     else:
         print("Wrong token")
         return "Error, wrong validation token"
+
+
+def send_message_response(sender_id, message_text):
+    sentenceDelimiter = ". "
+    messages = message_text.split(sentenceDelimiter)
+
+    for message in messages:
+        send_message(sender_id, message)
+
 
 def send_message(sender_id, message_text):
     '''
@@ -94,11 +87,10 @@ def handle_message():
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
+                    setting_listener(sender_id, message_text)
                     if "send image" in message_text:
                         if collection.count_documents({"user_id":sender_id}) > 0:
                             send_image(sender_id, find_image(sender_id))
-                    if "group_id=" in message_text:
-                        group_id = message_text
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
@@ -106,39 +98,55 @@ def handle_message():
                         add_image(sender_id, attachment_link)
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
-                            send_message_response(sender_id, attachment_id)
+                            send_message(sender_id, attachment_id)
 
     return "ok"
 
 mongo_db_pass = "rfgcbsD7q6jnYaJZ"
 cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
 db = cluster["pupdate"]
-collection = db["user"]
 
 def add_image(user_id, image_url):
     #mongo_db_pass = os.getenv('MONGODB', None)
+    collection = db["user"]
     post = {"user_id": str(user_id), "image_url": str(image_url)}
     collection.insert_one(post)
 
 def find_image(user_id):
+    collection = db["user"]
     count = collection.count_documents({"user_id":user_id})
     results = collection.find({"user_id":user_id})
     result = results[random.choice(range(count))]
     return result["image_url"]
 
 def find_group_image(group_id):
+    collection = db["user"]
     count = collection.count_documents({"group_id":group_id})
     results = collection.find({"group_id":group_id})
     result = results[random.choice(range(count))]
     return result["image_url"]
 
+def setting_listener(user_id, message_text):
+    if "==" in message:
+        sentenceDelimiter = "=="
+        messages = message_text.split(sentenceDelimiter)
+        setting, value = messages[0], messages[1]
+        if setting == "frequency":
+            set_frequency(user_id, value)
+        elif setting == "group_id":
+            set_group_id(user_id, value)
 
-def send_message_response(sender_id, message_text):
-    sentenceDelimiter = ". "
-    messages = message_text.split(sentenceDelimiter)
+def set_frequency(user_id, value):
+    post = {"_id": str(user_id), "frequency": value}
+    collection = db["settings"]
+    collection.insert_one(post)
+    send_message(user_id, "frequency changed")
 
-    for message in messages:
-        send_message(sender_id, message)
+def set_group_id(user_id, value):
+    post = {"_id": str(user_id), "group_id": value}
+    collection = db["settings"]
+    collection.insert_one(post)
+    send_message(user_id, "group id changed")
 
 
 @app.route('/webhook_dev', methods=['POST'])
