@@ -81,11 +81,8 @@ def handle_message():
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
                         #attachment_id = attachment["payload"]["attachment_id"]
-                        #upload_image(sender_id, attachment_link)
-                        send_message_response(sender_id, "hello")
-                #if messaging_event["message"].get("attachments"):
-                    #for attachment in messaging_event["message"]["attachments"]:
-                        #attachments.append(attachment["payload"]["url"])
+                        send_message_response(sender_id, attachment_link)
+                        upload_image(sender_id, attachment_link)
     return "ok"
 
 def upload_image(user_id, url):
@@ -99,7 +96,7 @@ def upload_image(user_id, url):
     })
 
     #public_id="https://res.cloudinary.com/dyigdenkz/pupdate/"
-    cloudinary.uploader.upload(url)
+    #cloudinary.uploader.upload(url)
     cloudinary.uploader.unsigned_upload(url, ml_default)
     return "ok"
     #, folder=user_id
