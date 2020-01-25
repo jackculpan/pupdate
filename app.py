@@ -20,15 +20,15 @@ def job():
     sender_id = "2540997945998584"
     send_message(sender_id, find_image(sender_id))
 
-schedule.every(10).minutes.do(job)
+#schedule.every(10).minutes.do(job)
 #schedule.every().hour.do(job)
 #schedule.every(1).day.at("12:30").do(job)
 #schedule.every().monday.do(job)
 #schedule.every().wednesday.at("13:15").do(job)
 
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+#while True:
+    #schedule.run_pending()
+    #time.sleep(1)
 
 @app.route('/', methods=['GET'])
 def handle_verification():
