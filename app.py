@@ -102,8 +102,8 @@ def add_image(user_id, image_url):
     collection.insert_one(post)
 
 def find_image(user_id):
-    results = collection.find({"user_id": user_id})
-    result = results[random.choice(range(len(results)))]
+    result = collection.find_one({"user_id": user_id})
+    #result = results[random.choice(range(len(results)))]
     return result["image_url"]
 
 
