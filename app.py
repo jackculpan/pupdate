@@ -1,6 +1,6 @@
 from flask import Flask, request, Response
 import requests, json, random, os
-import cloudinary as Cloud
+import cloudinary
 
 app = Flask(__name__)
 
@@ -80,9 +80,7 @@ def handle_message():
 
                 if messaging_event["message"].get("attachment"):
                     attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
-                    print(messaging_event["message"])
                     upload_image(sender_id, attachment_link)
-                    print("TESTING 123")
                 #if messaging_event["message"].get("attachments"):
                     #for attachment in messaging_event["message"]["attachments"]:
                         #attachments.append(attachment["payload"]["url"])
@@ -92,15 +90,15 @@ def upload_image(user_id, url):
     #cloudinary.uploader.unsigned_upload(url, str(count_files(user_id)),
     #cloud_name = 'dyigdenkz')
 
-    Cloud.config.update = ({
+    cloudinary.config = ({
         'cloud_name':os.getenv('CLOUDINARY_CLOUD_NAME', None),
         'api_key': os.getenv('CLOUDINARY_API_KEY', None),
         'api_secret': os.getenv('CLOUDINARY_API_SECRET', None)
     })
 
     #public_id="https://res.cloudinary.com/dyigdenkz/pupdate/"
-    print(url)
-    Cloud.uploader.unsigned_upload(url, ml_default)
+    cloudinary.uploader.upload(url)
+    cloudinary.uploader.unsigned_upload(url, ml_default)
     return "ok"
     #, folder=user_id
     #post_url = "https://api.cloudinary.com/v1_1/dyigdenkz/auto/upload"
