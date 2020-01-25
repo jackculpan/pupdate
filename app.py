@@ -95,7 +95,10 @@ def handle_message():
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
                         #send_message_response(sender_id, attachment_link)
-                        add_image(sender_id, attachment_link)
+                        if return_group_id(sender_id) is not None:
+                            add_image(sender_id, attachment_link)
+                        else:
+                            send_message(sender_id, "Please set your group id")
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
                             send_message(sender_id, attachment_id)
@@ -142,11 +145,21 @@ def set_frequency(user_id, value):
     collection.insert_one(post)
     send_message(user_id, "frequency changed")
 
+def return_frequency(user_id):
+    collection = db["settings"]
+    result = collection.find_one({"_id":user_id})
+    return result["frequency"]
+
 def set_group_id(user_id, value):
     post = {"_id": str(user_id), "group_id": value}
     collection = db["settings"]
     collection.insert_one(post)
     send_message(user_id, "group id changed")
+
+def return_group_id(user_id):
+    collection = db["settings"]
+    result = collection.find_one({"_id":user_id})
+    return result["group_id"]
 
 
 @app.route('/webhook_dev', methods=['POST'])
