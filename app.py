@@ -84,28 +84,22 @@ def handle_message():
             if messaging_event.get("message"):
                 sender_id = messaging_event["sender"]["id"]
                 recipient_id = messaging_event["recipient"]["id"]
+                set_default_settings(user_id)
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
                     setting_listener(sender_id, message_text)
 
                     if "send image" in message_text:
-                        if return_group_id(sender_id) is not None:
-                            group_id = return_group_id(sender_id)
-                            if db["user"].count_documents({"group_id":group_id}) > 0:
-                                send_image(sender_id, find_group_image(group_id))
-                        else:
-                            send_message(sender_id, "Please set your group id - reply with 'set group id' to learn how")
+                        group_id = return_group_id(sender_id)
+                        if db["user"].count_documents({"group_id":group_id}) > 0:
+                            send_image(sender_id, find_group_image(group_id))
 
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
                         #send_message_response(sender_id, attachment_link)
-
-                        if return_group_id(sender_id) is not None:
-                            add_image(sender_id, return_group_id(sender_id), attachment_link)
-                        else:
-                            send_message(sender_id, "Please set your group id - reply with 'set group id' to learn how'")
+                        add_image(sender_id, return_group_id(sender_id), attachment_link)
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
                             send_message(sender_id, attachment_id)
@@ -137,9 +131,6 @@ def find_group_image(group_id):
     return result["image_url"]
 
 def setting_listener(user_id, message_text):
-    set_frequency(user_id, "one_day")
-    set_group_id(user_id, user_id)
-
     if "==" in message_text:
         sentenceDelimiter = "=="
         messages = message_text.split(sentenceDelimiter)
@@ -148,6 +139,10 @@ def setting_listener(user_id, message_text):
             set_frequency(user_id, value) #need to turn value into integer from string
         elif setting == "group_id":
             set_group_id(user_id, value)
+
+def set_default_settings(user_id):
+    set_frequency(user_id, "one_day")
+    set_group_id(user_id, user_id)
 
 def set_frequency(user_id, value):
     post = {"_id": str(user_id), "frequency": value}
