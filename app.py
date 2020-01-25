@@ -86,7 +86,7 @@ def handle_message():
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
-                        send_message_response(sender_id, attachment_link)
+                        #send_message_response(sender_id, attachment_link)
                         add_image(sender_id, attachment_link)
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
