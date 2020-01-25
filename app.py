@@ -136,30 +136,29 @@ def setting_listener(user_id, message_text):
         messages = message_text.split(sentenceDelimiter)
         setting, value = messages[0], messages[1]
         if setting == "frequency":
-            set_frequency(user_id, value) #need to turn value into integer from string
+            change_frequency(user_id, value) #need to turn value into integer from string
         elif setting == "group_id":
-            set_group_id(user_id, value)
+            change_group_id(user_id, value)
 
 def set_default_settings(user_id):
-    set_frequency(user_id, "one_day")
-    set_group_id(user_id, user_id)
-
-def set_frequency(user_id, value):
-    post = {"_id": str(user_id), "frequency": value}
+    post = {"_id":str(user_id), "frequency":"one_day", "group_id":user_id}
     collection = db["settings"]
     collection.insert_one(post)
-    send_message(user_id, "frequency changed")
+
+def change_frequency(user_id, value):
+    collection = db["settings"]
+    collection.find_one_and_update({"_id":user_id}, {"$set": {"frequency": value}})
+    send_message(user_id, "frequency changed to {}".format(value))
 
 def return_frequency(user_id):
     collection = db["settings"]
     result = collection.find_one({"_id":user_id})
     return result["frequency"]
 
-def set_group_id(user_id, value):
-    post = {"_id": str(user_id), "group_id": value}
+def change_group_id(user_id, value):
     collection = db["settings"]
-    collection.insert_one(post)
-    send_message(user_id, "group id changed")
+    collection.find_one_and_update({"_id":user_id}, {"$set": {"group_id": value}})
+    send_message(user_id, "group id changed to {}".format(value))
 
 def return_group_id(user_id):
     collection = db["settings"]
@@ -202,18 +201,25 @@ def webhook_dev():
             if messaging_event.get("message"):
                 sender_id = messaging_event["sender"]["id"]
                 recipient_id = messaging_event["recipient"]["id"]
+                set_default_settings(sender_id)
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
+                    setting_listener(sender_id, message_text)
+
+                    if "send image" in message_text:
+                        group_id = return_group_id(sender_id)
+                        if db["user"].count_documents({"group_id":group_id}) > 0:
+                            send_image(sender_id, find_group_image(group_id))
+
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
                         #send_message_response(sender_id, attachment_link)
-                        add_image(sender_id, attachment_link)
-                        send_image(sender_id, attachment_link)
+                        add_image(sender_id, return_group_id(sender_id), attachment_link)
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
-                            send_message_response(sender_id, attachment_id)
+                            send_message(sender_id, attachment_id)
 
     return "ok"
 
