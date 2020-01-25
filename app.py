@@ -67,7 +67,7 @@ def handle_message():
     Handle messages sent by facebook messenger to the application
     '''
     data = request.get_json()
-    attachments = []
+    #attachments = []
     #if data["object"] == "page":
     for entry in data["entry"]:
         for messaging_event in entry["messaging"]:
@@ -77,12 +77,12 @@ def handle_message():
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
-
-                if "attachment" in messaging_event["message"]:
-                    attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
-                    attachment_id = messaging_event["message"]["attachment"]["payload"]["attachment_id"]
-                    upload_image(sender_id, attachment_link)
-                    send_message_response(sender_id, "hello")
+                if "attachments" in messaging_event["message"]:
+                    for attachment in messaging_event["message"]["attachments"]:
+                        attachment_link = attachment["payload"]["url"]
+                        #attachment_id = attachment["payload"]["attachment_id"]
+                        #upload_image(sender_id, attachment_link)
+                        send_message_response(sender_id, "hello")
                 #if messaging_event["message"].get("attachments"):
                     #for attachment in messaging_event["message"]["attachments"]:
                         #attachments.append(attachment["payload"]["url"])
