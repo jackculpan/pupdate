@@ -98,7 +98,7 @@ def add_image(user_id, image_url):
     post = {"user_id": user_id, "image_url": image_url}
     collection.insert_one(post)
 
-def find_image(user_id):
+#def find_image(user_id):
 
 def upload_image(user_id, url):
     #cloudinary.uploader.unsigned_upload(url, str(count_files(user_id)),
