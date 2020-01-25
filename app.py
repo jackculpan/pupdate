@@ -56,7 +56,7 @@ def send_image(sender_id, image_url):
             "type":"image",
             "payload":{
               "url":image_url,
-              "is_reusable":true
+              "is_reusable":True
             }
           }
         }
