@@ -137,12 +137,15 @@ def find_group_image(group_id):
     return result["image_url"]
 
 def setting_listener(user_id, message_text):
+    set_frequency(user_id, "one_day")
+    set_group_id(user_id, user_id)
+
     if "==" in message_text:
         sentenceDelimiter = "=="
         messages = message_text.split(sentenceDelimiter)
         setting, value = messages[0], messages[1]
         if setting == "frequency":
-            set_frequency(user_id, value)
+            set_frequency(user_id, value) #need to turn value into integer from string
         elif setting == "group_id":
             set_group_id(user_id, value)
 
@@ -167,6 +170,27 @@ def return_group_id(user_id):
     collection = db["settings"]
     result = collection.find_one({"_id":user_id})
     return result["group_id"]
+
+def send_frequency(user_id):
+    #def job():
+    #sender_id = "2540997945998584"
+    #count = collection.count_documents({"user_id":"one"})
+    #print(count)
+    #send_message(sender_id, find_image(sender_id))
+    freq = return_frequency(user_id)
+    if freq == "three_day":
+        schedule.every(1).day.at("08:30").do(job(user_id))
+        schedule.every(1).day.at("12:30").do(job(user_id))
+        schedule.every(1).day.at("16:30").do(job(user_id))
+    elif freq == "one_day":
+        schedule.every(1).day.at("12:30").do(job(user_id))
+    elif freq == "one_week":
+        schedule.every(1).wednesday.at("13:15").do(job(user_id))
+
+def job(user_id):
+    group_id = return_group_id(user_id)
+    send_image(user_id, find_group_image(group_id))
+
 
 
 @app.route('/webhook_dev', methods=['POST'])
@@ -204,3 +228,6 @@ def handle_dev_message(user_id, user_message):
 
 if __name__ == '__main__':
     app.run()
+    #while True:
+        #schedule.run_pending()
+        #time.sleep(1)
