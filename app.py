@@ -84,7 +84,7 @@ def handle_message():
             if messaging_event.get("message"):
                 sender_id = messaging_event["sender"]["id"]
                 recipient_id = messaging_event["recipient"]["id"]
-                set_default_settings(user_id)
+                set_default_settings(sender_id)
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
