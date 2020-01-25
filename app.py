@@ -3,12 +3,6 @@ import requests, json, random, os
 import cloudinary, pymongo
 from pymongo import MongoClient
 
-#mongo_db_pass = os.getenv('MONGODB', None)
-mongo_db_pass = "rfgcbsD7q6jnYaJZ"
-cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
-db = cluster["pupdate"]
-collection = db["user"]
-
 app = Flask(__name__)
 
 # env_variables
@@ -89,6 +83,7 @@ def handle_message():
                         attachment_link = attachment["payload"]["url"]
                         #send_message_response(sender_id, attachment_link)
                         add_image(sender_id, attachment_link)
+                        send_image(sender_id, attachment_link)
                         if "attachment_id" in attachment:
                             attachment_id = attachment["payload"]["attachment_id"]
                             send_message_response(sender_id, attachment_id)
@@ -96,7 +91,16 @@ def handle_message():
     return "ok"
 
 def add_image(user_id, image_url):
-    post = {"user_id": user_id, "image_url": image_url}
+    #mongo_db_pass = os.getenv('MONGODB', None)
+    mongo_db_pass = "rfgcbsD7q6jnYaJZ"
+    cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
+    db = cluster["pupdate"]
+    collection = db["user"]
+
+    post = {"user_id": "one", "image_url": "https://scontent-lht6-1.xx.fbcdn.net/v/t1.15752-9/83598910_147947033325885_1951601270645063680_n.png?_nc_cat=103&_nc_oc=AQkXbmgUdIdSYWdXMlGZ69aPiTzrJ_o_PAxaL6iGgOfAuUQYooIbq5g9g64FXr0RHX8&_nc_ht=scontent-lht6-1.xx&oh=f451589fc822a383d546790c371eb8c8&oe=5E9D4907"}
+    collection.insert_one(post)
+
+    post = {"user_id": str(user_id), "image_url": str(image_url)}
     collection.insert_one(post)
 
 #def find_image(user_id):
@@ -155,23 +159,30 @@ def send_message_response(sender_id, message_text):
 @app.route('/webhook_dev', methods=['POST'])
 def webhook_dev():
     # custom route for local development
-    #data = json.loads(request.data.decode('utf-8'))
-    #user_message = data['entry'][0]['messaging'][0]['message']['text']
-    #user_id = data['entry'][0]['messaging'][0]['sender']['id']
+    '''
+    Handle messages sent by facebook messenger to the application
+    '''
     data = request.get_json()
-
+    #attachments = []
     #if data["object"] == "page":
     for entry in data["entry"]:
         for messaging_event in entry["messaging"]:
             if messaging_event.get("message"):
                 sender_id = messaging_event["sender"]["id"]
                 recipient_id = messaging_event["recipient"]["id"]
-                message_text = messaging_event["message"]["text"]
-                send_message_response(sender_id, message_text)
+                if "text" in messaging_event["message"]:
+                    message_text = messaging_event["message"]["text"]
+                    send_message_response(sender_id, message_text)
+                if "attachments" in messaging_event["message"]:
+                    for attachment in messaging_event["message"]["attachments"]:
+                        attachment_link = attachment["payload"]["url"]
+                        #send_message_response(sender_id, attachment_link)
+                        add_image(sender_id, attachment_link)
+                        send_image(sender_id, attachment_link)
+                        if "attachment_id" in attachment:
+                            attachment_id = attachment["payload"]["attachment_id"]
+                            send_message_response(sender_id, attachment_id)
 
-                if messaging_event["message"].get("attachment"):
-                    attachment_link = messaging_event["message"]["attachment"]["payload"]["url"]
-                    send_image(sender_id, attachment_link)
     return "ok"
 
 def handle_dev_message(user_id, user_message):
