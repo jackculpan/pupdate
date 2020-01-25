@@ -1,6 +1,6 @@
 from flask import Flask, request, Response
 import requests, json, random, os
-import cloudinary, pymongo, dnspython
+import cloudinary, pymongo
 from pymongo import MongoClient
 
 mongo_db_pass = os.getenv('MONGODB', None)
