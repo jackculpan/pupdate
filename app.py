@@ -103,8 +103,7 @@ def add_image(user_id, image_url):
 
 def find_image(user_id):
     results = collection.find({"user_id": user_id})
-    count = count(results)
-    result = results[random.choice(range(count))]
+    result = results[random.choice(range(len(results)))]
     return result["image_url"]
 
 
