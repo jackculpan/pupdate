@@ -3,7 +3,8 @@ import requests, json, random, os
 import cloudinary, pymongo
 from pymongo import MongoClient
 
-mongo_db_pass = os.getenv('MONGODB', None)
+#mongo_db_pass = os.getenv('MONGODB', None)
+mongo_db_pass = "rfgcbsD7q6jnYaJZ"
 cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
 db = cluster["pupdate"]
 collection = db["user"]
