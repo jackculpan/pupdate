@@ -167,19 +167,17 @@ def return_group_id(user_id):
     return result["group_id"]
 
 def send_frequency(user_id):
-    #def job():
-    #sender_id = "2540997945998584"
-    #count = collection.count_documents({"user_id":"one"})
-    #print(count)
-    #send_message(sender_id, find_image(sender_id))
     freq = return_frequency(user_id)
     if freq == "three_day":
+        schedule.clear
         schedule.every(1).day.at("08:30").do(job(user_id))
         schedule.every(1).day.at("12:30").do(job(user_id))
         schedule.every(1).day.at("16:30").do(job(user_id))
     elif freq == "one_day":
+        schedule.clear
         schedule.every(1).day.at("12:30").do(job(user_id))
     elif freq == "one_week":
+        schedule.clear
         schedule.every(1).wednesday.at("13:15").do(job(user_id))
 
 def job(user_id):
@@ -229,6 +227,6 @@ def handle_dev_message(user_id, user_message):
 
 if __name__ == '__main__':
     app.run()
-    #while True:
-        #schedule.run_pending()
-        #time.sleep(1)
+    while True:
+        schedule.run_pending()
+        time.sleep(3600)
