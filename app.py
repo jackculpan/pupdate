@@ -1,18 +1,19 @@
 from flask import Flask, request, Response
 import requests, json, random, os
-import cloudinary, pymongo
+import pymongo
 from pymongo import MongoClient
 
 app = Flask(__name__)
 
 # env_variables
-# token to send messages through facebook messenger
 PAGE_ACCESS_TOKEN = os.getenv('ACCESS_TOKEN', None)
-# token to verify that this bot is legit
 VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', None)
+MONGODB = os.getenv('MONGODB', None)
+MONGODB = "rfgcbsD7q6jnYaJZ"
 
-#PAGE_ACCESS_TOKEN = 'EAAfdfGQccFQBAEQz2z2dZAMGaF3x5WlpG1YcaPJCMs0EU8sEPqdjetkWCzGf69FUa7mMwDZCJsg8VGy5VcpyMkc7VtV9p4Nyzi7s9QeXyggMTwjjSKHZBTZAoPzrhhSQdP8gDsiRtbEyG1LgVH3uCE29ZCfsfKwhPg8ZBadxjYCwZDZD'
-#VERIFY_TOKEN = '8d831a1a-22a0-4899-bb56-9f468c531bf9'
+
+cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(MONGODB))
+db = cluster["pupdate"]
 
 @app.route('/', methods=['GET'])
 def handle_verification():
@@ -85,6 +86,7 @@ def handle_message():
                 sender_id = messaging_event["sender"]["id"]
                 recipient_id = messaging_event["recipient"]["id"]
                 set_default_settings(sender_id)
+
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
@@ -94,21 +96,19 @@ def handle_message():
                         group_id = return_group_id(sender_id)
                         if db["user"].count_documents({"group_id":group_id}) > 0:
                             send_image(sender_id, find_group_image(group_id))
+                        else:
+                            send_message_response(sender_id, "You haven't uploaded a photo yet!")
 
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
-                        #send_message_response(sender_id, attachment_link)
-                        add_image(sender_id, return_group_id(sender_id), attachment_link)
-                        if "attachment_id" in attachment:
-                            attachment_id = attachment["payload"]["attachment_id"]
-                            send_message(sender_id, attachment_id)
+                        if attachment["type"] == "image":
+                            add_image(sender_id, return_group_id(sender_id), attachment_link)
+                        else:
+                            send_message_response(sender_id, "Please only send us images")
+
 
     return "ok"
-
-mongo_db_pass = "rfgcbsD7q6jnYaJZ"
-cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(mongo_db_pass))
-db = cluster["pupdate"]
 
 def add_image(user_id, group_id, image_url):
     #mongo_db_pass = os.getenv('MONGODB', None)
@@ -143,12 +143,13 @@ def setting_listener(user_id, message_text):
 def set_default_settings(user_id):
     post = {"_id":str(user_id), "frequency":"one_day", "group_id":user_id}
     collection = db["settings"]
-    collection.insert_one(post)
+    if collection.find_one({"_id":user_id}) == None:
+        collection.insert_one(post)
 
 def change_frequency(user_id, value):
     collection = db["settings"]
     collection.find_one_and_update({"_id":user_id}, {"$set": {"frequency": value}})
-    send_message(user_id, "frequency changed to {}".format(value))
+    send_message(user_id, "Thanks! Your frequency changed to {}".format(value))
 
 def return_frequency(user_id):
     collection = db["settings"]
@@ -158,7 +159,7 @@ def return_frequency(user_id):
 def change_group_id(user_id, value):
     collection = db["settings"]
     collection.find_one_and_update({"_id":user_id}, {"$set": {"group_id": value}})
-    send_message(user_id, "group id changed to {}".format(value))
+    send_message(user_id, "Thanks! Your group id changed to {}".format(value))
 
 def return_group_id(user_id):
     collection = db["settings"]
@@ -199,9 +200,10 @@ def webhook_dev():
     for entry in data["entry"]:
         for messaging_event in entry["messaging"]:
             if messaging_event.get("message"):
-                sender_id = messaging_event["sender"]["id"]
-                recipient_id = messaging_event["recipient"]["id"]
+                sender_id = "1"
+                recipient_id = "2"
                 set_default_settings(sender_id)
+
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
                     send_message_response(sender_id, message_text)
@@ -215,11 +217,9 @@ def webhook_dev():
                 if "attachments" in messaging_event["message"]:
                     for attachment in messaging_event["message"]["attachments"]:
                         attachment_link = attachment["payload"]["url"]
-                        #send_message_response(sender_id, attachment_link)
-                        add_image(sender_id, return_group_id(sender_id), attachment_link)
-                        if "attachment_id" in attachment:
-                            attachment_id = attachment["payload"]["attachment_id"]
-                            send_message(sender_id, attachment_id)
+                        if attachment["type"] == "image":
+                            print("image saved")
+                            add_image(sender_id, return_group_id(sender_id), attachment_link)
 
     return "ok"
 
