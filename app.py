@@ -170,7 +170,7 @@ def send_frequency(user_id):
     freq = return_frequency(user_id)
     if freq == "three_day":
         schedule.clear
-        schedule.every(1).day.at("08:30").do(job(user_id))
+        schedule.every(1).day.at(["08:30", "12:30", "16.30"]).do(job(user_id))
         schedule.every(1).day.at("12:30").do(job(user_id))
         schedule.every(1).day.at("16:30").do(job(user_id))
     elif freq == "one_day":
@@ -227,6 +227,6 @@ def handle_dev_message(user_id, user_message):
 
 if __name__ == '__main__':
     app.run()
-    while True:
-        schedule.run_pending()
-        time.sleep(3600)
+    #while True:
+        #schedule.run_pending()
+        #time.sleep(3600)
