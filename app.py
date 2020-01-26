@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-import requests, json, random, os
+import requests, json, random, os, schedule
 import pymongo
 from pymongo import MongoClient
 
@@ -10,7 +10,6 @@ PAGE_ACCESS_TOKEN = os.getenv('ACCESS_TOKEN', None)
 VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', None)
 MONGODB = os.getenv('MONGODB', None)
 MONGODB = "rfgcbsD7q6jnYaJZ"
-
 
 cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(MONGODB))
 db = cluster["pupdate"]
@@ -105,7 +104,7 @@ def handle_message():
                         if attachment["type"] == "image":
                             add_image(sender_id, return_group_id(sender_id), attachment_link)
                         else:
-                            send_message_response(sender_id, "Please only send us images")
+                            send_message_response(sender_id, "Thanks, however we can only store images :)")
 
 
     return "ok"
@@ -166,23 +165,12 @@ def return_group_id(user_id):
     result = collection.find_one({"_id":user_id})
     return result["group_id"]
 
-def send_frequency(user_id):
-    freq = return_frequency(user_id)
-    if freq == "three_day":
-        schedule.clear
-        schedule.every(1).day.at(["08:30", "12:30", "16.30"]).do(job(user_id))
-        schedule.every(1).day.at("12:30").do(job(user_id))
-        schedule.every(1).day.at("16:30").do(job(user_id))
-    elif freq == "one_day":
-        schedule.clear
-        schedule.every(1).day.at("12:30").do(job(user_id))
-    elif freq == "one_week":
-        schedule.clear
-        schedule.every(1).wednesday.at("13:15").do(job(user_id))
-
-def job(user_id):
-    group_id = return_group_id(user_id)
-    send_image(user_id, find_group_image(group_id))
+def job():
+    results = db["settings"].find({})
+    for user in results:
+        user_id = user["_id"]
+        group_id = return_group_id(user_id)
+        send_image(user_id, find_group_image(group_id))
 
 
 
@@ -227,6 +215,7 @@ def handle_dev_message(user_id, user_message):
 
 if __name__ == '__main__':
     app.run()
-    #while True:
-        #schedule.run_pending()
-        #time.sleep(3600)
+    schedule.every(1).day.at("12:30").do(job)
+    while True:
+        schedule.run_pending()
+        time.sleep(3600)
