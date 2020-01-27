@@ -49,7 +49,7 @@ def send_message(sender_id, message_text):
 
 def send_image(sender_id, image_url):
     '''
-    Sending response back to the user using facebook graph API
+    Sending image response back to the user using facebook graph API
     '''
     r = requests.post("https://graph.facebook.com/v2.6/me/messages",
 
@@ -109,17 +109,9 @@ def handle_message():
     return "ok"
 
 def add_image(user_id, group_id, image_url):
-    #mongo_db_pass = os.getenv('MONGODB', None)
     collection = db["user"]
     post = {"group_id":group_id, "user_id": str(user_id), "image_url": str(image_url)}
     collection.insert_one(post)
-
-def find_image(user_id):
-    collection = db["user"]
-    count = collection.count_documents({"user_id":user_id})
-    results = collection.find({"user_id":user_id})
-    result = results[random.choice(range(count))]
-    return result["image_url"]
 
 def find_group_image(group_id):
     collection = db["user"]
