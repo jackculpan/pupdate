@@ -102,8 +102,6 @@ def handle_message():
                         attachment_link = attachment["payload"]["url"]
                         if attachment["type"] == "image":
                             add_image(sender_id, return_group_id(sender_id), attachment_link)
-                            time.sleep(30)
-                            send_message_response(sender_id, "Thanks, we'll send you a random photo of your pet at midday, every day!")
                         else:
                             send_message_response(sender_id, "Thanks, however we can only store images :)")
 
