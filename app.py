@@ -212,6 +212,9 @@ def handle_dev_message(user_id, user_message):
     # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
     return "Hello "+user_id+" ! You just sent me : " + user_message
 
+@app.route('/privacy', methods=['POST'])
+def privacy():
+
 if __name__ == '__main__':
     app.run()
     schedule.every(1).day.at("12:30").do(job)
