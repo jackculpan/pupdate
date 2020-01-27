@@ -9,7 +9,6 @@ app = Flask(__name__)
 PAGE_ACCESS_TOKEN = os.getenv('ACCESS_TOKEN', None)
 VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', None)
 MONGODB = os.getenv('MONGODB', None)
-MONGODB = "rfgcbsD7q6jnYaJZ"
 
 cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(MONGODB))
 db = cluster["pupdate"]
@@ -88,7 +87,7 @@ def handle_message():
 
                 if "text" in messaging_event["message"]:
                     message_text = messaging_event["message"]["text"]
-                    send_message_response(sender_id, message_text)
+                    #send_message_response(sender_id, message_text)
                     setting_listener(sender_id, message_text)
 
                     if "send image" in message_text:
