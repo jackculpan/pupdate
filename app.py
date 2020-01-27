@@ -90,7 +90,7 @@ def handle_message():
                     #send_message_response(sender_id, message_text)
                     setting_listener(sender_id, message_text)
 
-                    if "send image" in message_text:
+                    if "send image" in message_text.lower():
                         group_id = return_group_id(sender_id)
                         if db["user"].count_documents({"group_id":group_id}) > 0:
                             send_image(sender_id, find_group_image(group_id))
