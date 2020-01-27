@@ -1,5 +1,5 @@
 from flask import Flask, request, Response
-import requests, json, random, os, schedule
+import requests, json, random, os, schedule, time
 import pymongo
 from pymongo import MongoClient
 
@@ -219,7 +219,7 @@ def privacy():
 
 if __name__ == '__main__':
     app.run()
-    schedule.every(1).day.at("10:15").do(job)
+    schedule.every(1).day.at("10:20").do(job)
     while True:
         schedule.run_pending()
         time.sleep(1)
