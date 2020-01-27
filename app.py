@@ -214,6 +214,7 @@ def handle_dev_message(user_id, user_message):
 
 @app.route('/privacy', methods=['POST'])
 def privacy():
+    return "Privacy policy: https://www.websitepolicies.com/policies/view/RdSAo4ss"
 
 if __name__ == '__main__':
     app.run()
