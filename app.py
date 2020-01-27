@@ -211,7 +211,8 @@ def privacy():
 
 if __name__ == '__main__':
     app.run()
-    schedule.every(6).hour.do(job)
+    schedule.every(10).minutes.do(job)
+    #schedule.every(6).hour.do(job)
     while True:
         schedule.run_pending()
         time.sleep(1)
