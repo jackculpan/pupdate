@@ -68,3 +68,4 @@ Check at least the 'messages' box in Subscription Fields, others are optional fo
 2. On your app page on developers.facebook.com, at the webhooks section, select the page to subscribe your webhook to the page events.
 
 3. At the bottom of the page, section "app controle for messenger", `add` the `pages_messaging`
+# pupdate
