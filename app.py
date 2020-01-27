@@ -162,8 +162,14 @@ def job():
         user_id = user["_id"]
         group_id = return_group_id(user_id)
         send_image(user_id, find_group_image(group_id))
-        send_image(user_id, find_group_image(group_id))
 
+def job_three():
+    results = db["settings"].find({})
+    for user in results:
+        user_id = user["_id"]
+        group_id = return_group_id(user_id)
+        if user["frequency"] == "three_day":
+            send_image(user_id, find_group_image(group_id))
 
 
 @app.route('/webhook_dev', methods=['POST'])
