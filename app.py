@@ -212,7 +212,7 @@ def handle_dev_message(user_id, user_message):
     # DO SOMETHING with the user_message ... ¯\_(ツ)_/¯
     return "Hello "+user_id+" ! You just sent me : " + user_message
 
-@app.route('/privacy', methods=['POST'])
+@app.route('/privacy', methods=['GET'])
 def privacy():
     return "Privacy policy: https://www.websitepolicies.com/policies/view/RdSAo4ss"
 
