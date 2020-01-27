@@ -170,6 +170,7 @@ def job():
         user_id = user["_id"]
         group_id = return_group_id(user_id)
         send_image(user_id, find_group_image(group_id))
+        send_image(user_id, find_group_image(group_id))
 
 
 
@@ -218,7 +219,7 @@ def privacy():
 
 if __name__ == '__main__':
     app.run()
-    schedule.every(1).day.at("12:30").do(job)
+    schedule.every(1).day.at("10:10").do(job)
     while True:
         schedule.run_pending()
         time.sleep(3600)
