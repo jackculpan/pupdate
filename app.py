@@ -219,7 +219,7 @@ def privacy():
 
 if __name__ == '__main__':
     app.run()
-    schedule.every(1).day.at("10:10").do(job)
+    schedule.every(1).day.at("10:15").do(job)
     while True:
         schedule.run_pending()
-        time.sleep(3600)
+        time.sleep(1)
