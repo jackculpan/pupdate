@@ -9,8 +9,9 @@ app = Flask(__name__)
 PAGE_ACCESS_TOKEN = os.getenv('ACCESS_TOKEN', None)
 VERIFY_TOKEN = os.getenv('VERIFY_TOKEN', None)
 MONGODB = os.getenv('MONGODB', None)
+CLUSTER = os.getenv('CLUSTER', None)
 
-cluster = MongoClient("mongodb+srv://jackculpan:{}@cluster0-qnac0.mongodb.net/pupdate?retryWrites=true&w=majority".format(MONGODB))
+cluster = MongoClient(f"mongodb+srv://jackculpan:{}@{CLUSTER}.mongodb.net/pupdate?retryWrites=true&w=majority".format(MONGODB))
 db = cluster["pupdate"]
 
 @app.route('/', methods=['GET'])
